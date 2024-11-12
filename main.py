@@ -37,5 +37,53 @@ try:  # Обробка виключної ситуації, якщо файл н
 except FileNotFoundError:
     print("Файл не знайдено!")
 
+# Рожченко Іван: переписання даних з JSON-файлу у CSV
+try:
+    # Відкриття Data_1.csv для запису
+    with open("Data_1.csv", "w", newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
+        writer.writeheader()
 
+        # Відкриття Data_1.json для читання
+        with open("Data_1.json", "r") as jsonfile:
+            Data_json = json.load(jsonfile)
 
+        # Перенесення даних з Data_1.json у Data_1.csv
+        for Sole_proprietor, EDRPOU_Code in Data_json.items():
+            writer.writerow({'Sole proprietor': Sole_proprietor, 'EDRPOU Code': EDRPOU_Code['EDRPOU Code']})
+        print("\nДані з Data_1.json у Data_1.csv було перенесено успішно.\n\nДодамо нові:")
+
+        # Додавання нових даних
+        writer.writerow({'Sole proprietor': 'LLC SILPO-FOOD', 'EDRPOU Code': '40720198'})
+        writer.writerow({'Sole proprietor': 'NEW POST LLC', 'EDRPOU Code': '31316718'})
+
+        print("ФОП: LLC SILPO-FOOD | Код ЄДРПОУ: 40720198\n"
+            "ФОП: NEW POST LLC | Код ЄДРПОУ: 31316718\n"
+            "\nДані було додано успішно\n")
+
+except FileNotFoundError:
+    print("Файл Data_1.csv або Data_1.json не знайдено!")
+    exit()
+
+# Виведення CSV-файлу у вигляді таблиці
+try:
+    with open("Data_1.csv", "r") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=",")
+
+        # Створення таблиці
+        table = PrettyTable()
+        table.field_names = ["ФОП", "Код ЄДРПОУ"]
+        print("Українські ФОП (оновлені):")
+
+        # Додавання рядків до таблиці
+        for row in reader:
+            Sole_proprietor = row['Sole proprietor']
+            EDRPOU_Code = row['EDRPOU Code']
+            table.add_row([Sole_proprietor, EDRPOU_Code])
+
+        # Виведення таблиці
+        print(table)
+
+except FileNotFoundError:
+    print("Файл Data_1.csv не знайдено!")
+    exit()
