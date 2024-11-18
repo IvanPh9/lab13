@@ -108,3 +108,60 @@ try:
         print("Дані успішно конвертовані у Data_2.json із додаванням нових рядків.")
 except FileNotFoundError:
     print("Файл Data_1.csv не знайдено!")
+
+#Івженко Тимофій: перенесення файлів з CSV у новий JSON
+try:
+    # Відкриття Data_2.csv для запису
+    fieldnames = ['Sole proprietor', 'EDRPOU Code']
+    with open("Data_2.csv", "w", newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
+        writer.writeheader()
+
+        # Відкриття Data_2.json для читання
+        try:
+            with open("Data_2.json", "r") as jsonfile:
+                Data_json = json.load(jsonfile)
+
+            # Перенесення даних з Data_2.json у Data_2.csv
+            for Sole_proprietor, details in Data_json.items():
+                writer.writerow({
+                    'Sole proprietor': Sole_proprietor,
+                    'EDRPOU Code': details.get('EDRPOU Code', 'N/A')  # Запасний варіант, якщо ключа немає
+                })
+            print("\nДані з Data_2.json у Data_2.csv було перенесено успішно.\n\nДодамо нові:")
+        except FileNotFoundError:
+            print("Файл Data_2.json не знайдено. Пропускаємо.")
+
+        # Додавання нових даних
+        writer.writerow({'Sole proprietor': 'LLC DNIPRO-M', 'EDRPOU Code': '43605804'})
+        writer.writerow({'Sole proprietor': 'PJSC KYIVSTAR', 'EDRPOU Code': '21673832'})
+
+        print("ФОП: LLC DNIPRO-M | Код ЄДРПОУ: 43605804\n"
+              "ФОП: PJSC KYIVSTAR | Код ЄДРПОУ: 21673832\n"
+              "\nДані було додано успішно\n")
+
+except FileNotFoundError:
+    print("Файл Data_2.csv або Data_2.json не знайдено!")
+    exit()
+
+# Виведення CSV-файлу у вигляді таблиці
+try:
+    with open("Data_2.csv", "r") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=",")
+
+        # Створення таблиці
+        table = PrettyTable()
+        table.field_names = ["ФОП", "Код ЄДРПОУ"]
+        print("Українські ФОП (оновлені):")
+
+        # Додавання рядків до таблиці
+        for row in reader:
+            Sole_proprietor = row['Sole proprietor']
+            EDRPOU_Code = row['EDRPOU Code']
+            table.add_row([Sole_proprietor, EDRPOU_Code])
+
+        # Виведення таблиці
+        print(table)
+
+except FileNotFoundError:
+    print("Файл Data_2.csv не знайдено!")
