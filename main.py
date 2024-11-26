@@ -165,3 +165,24 @@ try:
 
 except FileNotFoundError:
     print("Файл Data_2.csv не знайдено!")
+
+# Дяченко Юлія: Конвертація оновленого CSV у JSON з додаванням нових даних
+try:
+    with open("Data_2.csv", "r") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=",")
+        data = {}
+        for row in reader:
+            Sole_proprietor = row['Sole proprietor']
+            EDRPOU_Code = row['EDRPOU Code']
+            data[Sole_proprietor] = {"EDRPOU Code": EDRPOU_Code}
+
+        # Додавання нових даних
+        data["LLC LENOVO UKRAINE"] = {"EDRPOU Code": "39453551"}
+        data["EPICENTR K LLC"] = {"EDRPOU Code": "32490244"}
+
+        # Запис у новий JSON-файл
+        with open("Data_3.json", "w") as jsonfile:
+            json.dump(data, jsonfile, ensure_ascii=False, indent=4)
+        print("Дані успішно конвертовані у Data_3.json із додаванням нових рядків.")
+except FileNotFoundError:
+    print("Файл Data_2.csv не знайдено!")
